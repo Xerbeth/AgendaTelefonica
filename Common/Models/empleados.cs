@@ -7,13 +7,14 @@ namespace Common.Models
     using System.Data.Entity.Spatial;
 
     [Table("developer.empleados")]
-    public partial class empleados
+    public partial class empleados : IHasAutoID
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public empleados()
         {
             empleados1 = new HashSet<empleados>();
             telefonos = new HashSet<telefonos>();
+            Fecha_Registro = DateTime.Now;
         }
 
         [Key]
@@ -60,5 +61,15 @@ namespace Common.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<telefonos> telefonos { get; set; }
+
+        /// <summary>
+        /// Implementación de la interface IHasAutoID que me permite obtener el Id de registro insertado
+        /// </summary>
+        /// <returns> Llave primaria del útimo registro agregado </returns>
+        public int getAutoId()
+        {
+            return Empleado_Id;
+        }
     }
+
 }

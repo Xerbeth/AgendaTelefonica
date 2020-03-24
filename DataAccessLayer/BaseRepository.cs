@@ -1,23 +1,30 @@
-﻿using System;
+﻿#region Referencias 
+using Common.Models;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+#endregion
 
 namespace DataAccessLayer
 {
-    class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : class
+    /// <summary>
+    /// Clase con la implementación generica del repository
+    /// </summary>
+    /// <typeparam name="TEntity"> Objecto entidad del EF </typeparam>
+    public class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : class
     {
-        //internal ApplicationContext context;
+        internal DbContextApp context;
         internal DbSet<TEntity> dbSet;
 
-        //public BaseRepository(ApplicationContext context)
-        //{
-        //    this.context = context;
-        //    this.dbSet = context.Set<TEntity>();
-        //}
+        public BaseRepository(DbContextApp context)
+        {
+            this.context = context;
+            this.dbSet = context.Set<TEntity>();
+        }
 
         public virtual IEnumerable<TEntity> GetWithRawSql(string query,
             params object[] parameters)
@@ -62,35 +69,53 @@ namespace DataAccessLayer
             return dbSet.Find(id);
         }
 
-        public virtual void Insert(TEntity entity)
+        public virtual string Insert(TEntity entity)
         {
-            dbSet.Add(entity);
+            try {                
+                dbSet.Add(entity);
+                context.SaveChanges();
+
+                if (entity is IHasAutoID)
+                {
+                    return ((IHasAutoID)entity).getAutoId().ToString();
+                }
+                return "-1";
+            }
+            catch (Exception e) 
+            {
+                return e.InnerException.ToString();
+            }            
         }
 
-        public virtual void Delete(object id)
+        public virtual string Delete(object id)
         {
             TEntity entityToDelete = dbSet.Find(id);
-            Delete(entityToDelete);
+            return Delete(entityToDelete);
         }
 
-        public virtual void Delete(TEntity entityToDelete)
+        public virtual string Delete(TEntity entityToDelete)
         {
-            //if (context.Entry(entityToDelete).State == EntityState.Detached)
-            //{
-            //    dbSet.Attach(entityToDelete);
-            //}
-            dbSet.Remove(entityToDelete);
+            try
+            {
+                if (context.Entry(entityToDelete).State == EntityState.Detached)
+                {
+                    dbSet.Attach(entityToDelete);
+                }
+                dbSet.Remove(entityToDelete);
+                context.SaveChanges();
+                return true.ToString();
+            }
+            catch (Exception e)
+            {
+                return e.InnerException.ToString();
+            }            
         }
 
         public virtual void Update(TEntity entityToUpdate)
         {
             dbSet.Attach(entityToUpdate);
-            //context.Entry(entityToUpdate).State = EntityState.Modified;
+            context.Entry(entityToUpdate).State = EntityState.Modified;
         }
 
-        //public IEnumerable<TEntity> Get(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = "")
-        //{
-        //    throw new NotImplementedException();
-        //}
     }
 }

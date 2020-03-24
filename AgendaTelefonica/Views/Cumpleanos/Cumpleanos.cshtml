@@ -1,0 +1,68 @@
+﻿@model List<Common.Models.InfoCumpleanosDto>
+@{
+    ViewBag.Title = "Cuenta regresiva";
+}
+
+<script src="~/Scripts/Cumpleanos/Cumpleanos.js"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="~/Css/Agenda/Index.css" rel="stylesheet" />
+
+<div class="container">
+    <div class="table-wrapper">
+        <div class="table-title">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h2>Cuenta regresiva para los <b>Cumpleaños</b></h2>
+                </div>
+                <div class="col-sm-6">
+                </div>
+            </div>
+        </div>
+        <table class="table table-striped table-hover">
+            @*Header columns*@
+            <thead>
+                <tr>
+                    <th>Documento</th>
+                    <th>Nombre completo</th>
+                    <th>Fecha nacimiento</th>
+                    <th>Edad</th>
+                    <th>Próximo cumpleaños en</th>
+                </tr>
+            </thead>
+            <tbody>
+                @*Contenido table*@
+                @foreach (var InfoCumpleanosDto in Model)
+                {
+                    <tr>
+                        <td>@InfoCumpleanosDto.Documento</td>
+                        <td>@InfoCumpleanosDto.Nombre</td>
+                        <td>@InfoCumpleanosDto.FechaNacimiento</td>
+                        <td>@InfoCumpleanosDto.Edad años</td>
+                        <td>
+                            @if (@InfoCumpleanosDto.ProximoCumpleanos == 0)
+                            {
+                                @:Hoy es su cumple!
+                            }
+                            else
+                            {
+                                @InfoCumpleanosDto.ProximoCumpleanos @:días
+                            }
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    Cumpleanos.init();
+</script>

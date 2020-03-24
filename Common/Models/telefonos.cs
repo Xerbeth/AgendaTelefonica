@@ -7,8 +7,12 @@ namespace Common.Models
     using System.Data.Entity.Spatial;
 
     [Table("developer.telefonos")]
-    public partial class telefonos
+    public partial class telefonos : IHasAutoID
     {
+        public telefonos()
+        {
+            Fecha_Registro = DateTime.Now;
+        }
         [Key]
         public int Telefono_Id { get; set; }
 
@@ -24,5 +28,15 @@ namespace Common.Models
         public virtual empleados empleados { get; set; }
 
         public virtual tipostelefonos tipostelefonos { get; set; }
+
+        /// <summary>
+        /// Implementación de la interface IHasAutoID que me permite obtener el Id de registro insertado
+        /// </summary>
+        /// <returns> Llave primaria del útimo registro agregado </returns>
+        public int getAutoId()
+        {
+            return Telefono_Id;
+        }
     }
+    
 }

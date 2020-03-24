@@ -1,16 +1,22 @@
-﻿using System;
+﻿#region Referencias 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+#endregion
 
 namespace DataAccessLayer
 {
+    /// <summary>
+    /// Clase Interface para definir los metodos genericos del repository
+    /// </summary>
+    /// <typeparam name="TEntity"> Objecto entidad del EF </typeparam>
     public interface IRepository<TEntity> where TEntity : class
     {
-        void Delete(TEntity entityToDelete);
-        void Delete(object id);
+        string Delete(TEntity entityToDelete);
+        string Delete(object id);
         IEnumerable<TEntity> Get(
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
@@ -18,7 +24,7 @@ namespace DataAccessLayer
         TEntity GetByID(object id);
         IEnumerable<TEntity> GetWithRawSql(string query,
             params object[] parameters);
-        void Insert(TEntity entity);
+        string Insert(TEntity entity);
         void Update(TEntity entityToUpdate);
     }
 }
